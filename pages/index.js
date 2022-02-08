@@ -1,9 +1,27 @@
-import Head from 'next/head'
+import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 import Banner from '../components/banner';
 import Image from 'next/image';
+import Card from '../components/card';
+import { fetchCoffeeStores } from '../lib/coffee-stores';
 
-export default function Home() {
+// import coffeeStoresData from '../data/coffee-stores.json';
+
+
+
+export async function getStaticProps(context) {
+
+const coffeeStores = await fetchCoffeeStores()
+
+  return {
+    props: {
+      coffeeStores,
+      city: coffeeStores[0].neighbourhood
+    }
+  }
+}
+
+export default function Home(props) {
 
   const handleOnBannerButtonClick = () => {
     console.log('clicked banner button')
@@ -22,8 +40,18 @@ export default function Home() {
         <div className={styles.heroImage}>
           <Image src='/static/hero-image.png' width='700' height='400' />
         </div>
-      </main>
+        {props.coffeeStores.length > 0 && <>
+          <h2 className={styles.heading2}>{props.city} stores</h2>
+          <div className={styles.cardLayout}>
+            {props.coffeeStores.map(store => {
+              return (
+                <Card className={styles.card} key={store.id} name={store.name} imgUrl={store.imgUrl} href={`/coffee-store/${store.id}`} />
+              )
+            })}
+          </div>
+        </>}
 
+      </main>
     </div>
   )
 }
