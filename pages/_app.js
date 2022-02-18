@@ -7,4 +7,4 @@ function MyApp({ Component, pageProps }) {
           </StoreProvider>)
 }
 
-export default MyApp
+export default MyApp;
