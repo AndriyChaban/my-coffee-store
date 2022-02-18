@@ -22,7 +22,6 @@ export async function getStaticProps({ params }) {
 }
 
 export async function getStaticPaths() { //runs on SS
-
     const coffeeStoresData = await fetchCoffeeStores();
     const paths = coffeeStoresData.map(store => {
         return {
@@ -31,7 +30,6 @@ export async function getStaticPaths() { //runs on SS
             }
         }
     })
-
     return {
         paths: paths,
         fallback: true,
@@ -43,19 +41,32 @@ export const isEmpty = (obj) => {
 };
 
 const CoffeeStore = (props) => {
-
     const router = useRouter();
-
-
     const handleUpvoteButton = () => { };
-
     const id = router.query.id;
-
     const [coffeeStore, setCoffeeStore] = useState(props.coffeeStore);
-
-    const {state: { coffeeStores }} = useContext(StoreContext);
+    const { state: { coffeeStores } } = useContext(StoreContext);
 
     console.log("Coffeestores: ", coffeeStores);
+
+    const handleCreateCoffeeStore = async (coffeeStore) => {
+        try {
+            const { id, name, voting, address, imgUrl, neighbourhood } = coffeeStore;
+            const response = await fetch('/api/createCoffeeStore', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id, name, voting, address: address || '', imgUrl, neighbourhood: neighbourhood || '' })
+            });
+            const dbCoffeeStore = response.json();
+            console.log({ dbCoffeeStore });
+
+
+        } catch (err) {
+            console.error('Error creating Coffee Store: ', err)
+        }
+    }
 
     useEffect(() => {
         if (isEmpty(props.coffeeStore)) {
@@ -65,6 +76,7 @@ const CoffeeStore = (props) => {
                 });
                 if (coffeeStoreFromContext) {
                     setCoffeeStore(coffeeStoreFromContext);
+                    handleCreateCoffeeStore(coffeeStoreFromContext);
                 }
             }
         }
@@ -73,9 +85,6 @@ const CoffeeStore = (props) => {
     if (router.isFallback) {
         return <div>Loading...</div>
     };
-
- 
-
     const { address, name, neighbourhood, imgUrl, storeImg } = coffeeStore;
 
     return (
