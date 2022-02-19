@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import { StoreContext } from "../context/store-context";
 import { ACTION_TYPES } from "../context/store-context";
+import { useGlobalState } from "../context/global-state";
 
 
 const useTrackLocation = () => {
@@ -17,6 +18,8 @@ const useTrackLocation = () => {
 
     const { dispatch } = useContext(StoreContext);
 
+    const [latlong, setLatlong] = useGlobalState('latlong');
+
     function success(pos) {
         setIsFindingLoc(false);
         var crd = pos.coords;
@@ -24,7 +27,8 @@ const useTrackLocation = () => {
         const long = crd.longitude;
         // setLatLong(`${lat.toFixed(2)}%2C${long.toFixed(2)}`);
         // dispatch({ type: ACTION_TYPES.SET_LATLONG, payload: { latlong: `${lat.toFixed(2)}%2C${long.toFixed(2)}`}})
-        dispatch({ type: ACTION_TYPES.SET_LATLONG, payload: { latlong: `40.70%2C-73.90`}})
+        // dispatch({ type: ACTION_TYPES.SET_LATLONG, payload: { latlong: `40.70%2C-73.90`}})
+        setLatlong(`40.70%2C-73.90`)
     }
 
     function error(err) {

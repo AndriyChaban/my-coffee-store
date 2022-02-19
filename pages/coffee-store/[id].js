@@ -7,7 +7,8 @@ import Image from "next/image";
 import cls from 'classnames';
 import { fetchCoffeeStores } from "../../lib/coffee-stores";
 import { useContext, useEffect, useState } from "react";
-import { StoreContext } from "../../context/store-context";
+// import { StoreContext } from "../../context/store-context";
+import { useGlobalState } from "../../context/global-state";
 
 
 export async function getStaticProps({ params }) {
@@ -42,12 +43,13 @@ export const isEmpty = (obj) => {
 
 const CoffeeStore = (props) => {
     const router = useRouter();
-    const handleUpvoteButton = () => { };
     const id = router.query.id;
     const [coffeeStore, setCoffeeStore] = useState(props.coffeeStore);
-    const { state: { coffeeStores } } = useContext(StoreContext);
+    // const context = useContext(StoreContext);
+    // console.log("Context: ", context)
+    // const { state: { coffeeStores } } = context;
 
-    console.log("Coffeestores: ", coffeeStores);
+    const [coffeeStores, setCoffeeStores] = useGlobalState('coffeeStores');
 
     const handleCreateCoffeeStore = async (coffeeStore) => {
         try {
@@ -57,10 +59,10 @@ const CoffeeStore = (props) => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ id, name, voting, address: address || '', imgUrl, neighbourhood: neighbourhood || '' })
+                body: JSON.stringify({ id, name, voting: 0, address: address || '', imgUrl, neighbourhood: neighbourhood || '' })
             });
             const dbCoffeeStore = response.json();
-            console.log({ dbCoffeeStore });
+            // console.log({ dbCoffeeStore });
 
 
         } catch (err) {
@@ -70,7 +72,7 @@ const CoffeeStore = (props) => {
 
     useEffect(() => {
         if (isEmpty(props.coffeeStore)) {
-            if (coffeeStores > 0) {
+            if (coffeeStores.length > 0) {
                 const coffeeStoreFromContext = coffeeStores.find((coffeeStore) => {
                     return coffeeStore.id.toString() === id; //dynamic id
                 });
@@ -78,14 +80,26 @@ const CoffeeStore = (props) => {
                     setCoffeeStore(coffeeStoreFromContext);
                     handleCreateCoffeeStore(coffeeStoreFromContext);
                 }
-            }
+            } 
+        } else {
+            handleCreateCoffeeStore(props.coffeeStore);
         }
     }, [id, props, props.coffeeStore]);
 
+    const { address, name, neighbourhood, imgUrl, storeImg } = coffeeStore;
+    
+    const [votingCount, setVotingCount] = useState(1);
+
+    const handleUpvoteButton = () => { 
+        console.log("handle upvote");
+        let count = votingCount + 1;
+        setVotingCount(count);
+     };
+    
+    
     if (router.isFallback) {
         return <div>Loading...</div>
     };
-    const { address, name, neighbourhood, imgUrl, storeImg } = coffeeStore;
 
     return (
         <div className={styles.layout}>
@@ -121,7 +135,7 @@ const CoffeeStore = (props) => {
                     </div>}
                     <div className={styles.iconWrapper}>
                         <Image src="/static/icons/star.svg" width="24" height="24" />
-                        <p className={styles.text}>1</p>
+                        <p className={styles.text}>{ votingCount }</p>
                     </div>
                     <button className={styles.upvoteButton} onClick={handleUpvoteButton}>Upvote</button>
                 </div>

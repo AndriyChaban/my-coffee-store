@@ -1,13 +1,14 @@
 import Head from 'next/head';
+import { useEffect, useState, useContext } from 'react';
 import styles from '../styles/Home.module.css';
-import Banner from '../components/banner';
 import Image from 'next/image';
 import Card from '../components/card';
+import Banner from '../components/banner';
 import { fetchCoffeeStores } from '../lib/coffee-stores';
 import useTrackLocation from '../hooks/use-track-location';
-import { useEffect, useState, useContext } from 'react';
-import { ACTION_TYPES } from '../context/store-context';
-import { StoreContext } from '../context/store-context';
+// import { ACTION_TYPES, StoreContext } from '../context/store-context';
+import { useGlobalState } from '../context/global-state';
+// import { StoreContext } from '../context/store-context';
 
 // import coffeeStoresData from '../data/coffee-stores.json';
 
@@ -31,19 +32,25 @@ export default function Home(props) {
 
   // const [coffeeStores, setCoffeeStores] = useState('');
   const [coffeeStoresError, setCoffeeStoresError] = useState(null);
-  const { dispatch, state } = useContext(StoreContext);
+  // const { dispatch, state } = useContext(StoreContext);
 
-  const { latlong, coffeeStores  } = state;
+  // const { latlong, coffeeStores } = state;
+
+  const [latlong, setLatlong] = useGlobalState('latlong');
+  const [coffeeStores, setCoffeeStores] = useGlobalState('coffeeStores');
+  
+  // console.log("coffeestores from global: ", coffeeStores);
 
   useEffect(() => {
     async function fetchData() {
       if (latlong) {
         try {
-          const res = await fetch(`/api/getCoffeeStoresByLocation?latlong=${latlong}&limit=5`);
+          const res = await fetch(`/api/getCoffeeStoresByLocation?latlong=${latlong}&limit=9`);
           const fetchedCoffeeStores = await res.json();
-          console.log("fetched coffee stores ", { fetchedCoffeeStores });
+          console.log({ fetchedCoffeeStores });
           // setCoffeeStores(fetchedCoffeeStores);
-          dispatch({ type: ACTION_TYPES.SET_COFFEESTORES, payload: { coffeeStores: fetchedCoffeeStores } });
+          // dispatch({ type: ACTION_TYPES.SET_COFFEESTORES, payload: { coffeeStores: fetchedCoffeeStores } });
+          setCoffeeStores(fetchedCoffeeStores)
           //set coffee stores
           setCoffeeStoresError('');
         } catch (err) {

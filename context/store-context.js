@@ -19,7 +19,7 @@ const storeReducer = (state, action) => {
     }
 }
 
-const StoreProvider = ({ children }) => {
+const StoreProvider = (props) => {
     const initialState = {
         latlong: "",
         coffeeStores: []
@@ -27,7 +27,7 @@ const StoreProvider = ({ children }) => {
     const [state, dispatch] = useReducer(storeReducer, initialState);
 
     return <StoreContext.Provider value={{ state, dispatch }}>
-        {children}
+        {props.children}
     </StoreContext.Provider>
 }
 
