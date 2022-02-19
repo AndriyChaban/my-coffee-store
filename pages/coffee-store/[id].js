@@ -126,10 +126,7 @@ const CoffeeStore = (props) => {
         } catch (err) {
             console.error('Error updating Coffee Store: ', err)
         }
-    };
-    
-    
-    
+    };    
     
     if (router.isFallback) {
         return <div>Loading...</div>
@@ -139,6 +136,7 @@ const CoffeeStore = (props) => {
         <div className={styles.layout}>
             <Head>
                 <title>{coffeeStore.name}</title>
+                <meta name="description" content={`${coffeeStore.name} coffee-store`}/>
             </Head>
             <div className={styles.container}>
                 <div className={styles.col1}>
@@ -160,15 +158,15 @@ const CoffeeStore = (props) => {
 
                 <div className={cls("glass", styles.col2)}>
                     <div className={styles.iconWrapper}>
-                        <Image src="/static/icons/nearMe.svg" width="24" height="24" />
+                        <Image src="/static/icons/nearMe.svg" width="24" height="24" alt=""/>
                         <p className={styles.text}> {coffeeStore.address}</p>
                     </div>
                     {coffeeStore.neighbourhood && <div className={styles.iconWrapper}>
-                        <Image src="/static/icons/places.svg" width="24" height="24" />
+                        <Image src="/static/icons/places.svg" width="24" height="24" alt=""/>
                         <p className={styles.text}> {coffeeStore.neighbourhood}</p>
                     </div>}
                     <div className={styles.iconWrapper}>
-                        <Image src="/static/icons/star.svg" width="24" height="24" />
+                        <Image src="/static/icons/star.svg" width="24" height="24" alt=""/>
                         <p className={styles.text}>{ votingCount }</p>
                     </div>
                     <button className={styles.upvoteButton} onClick={handleUpvoteButton}>Upvote</button>
