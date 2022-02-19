@@ -28,18 +28,10 @@ export default function Home(props) {
 
   const { handleTrackLocation, locationErrorMsg, isFindingLoc } = useTrackLocation();
 
-  // console.log({ latlong, locationErrorMsg });
-
-  // const [coffeeStores, setCoffeeStores] = useState('');
   const [coffeeStoresError, setCoffeeStoresError] = useState(null);
-  // const { dispatch, state } = useContext(StoreContext);
-
-  // const { latlong, coffeeStores } = state;
 
   const [latlong, setLatlong] = useGlobalState('latlong');
   const [coffeeStores, setCoffeeStores] = useGlobalState('coffeeStores');
-  
-  // console.log("coffeestores from global: ", coffeeStores);
 
   useEffect(() => {
     async function fetchData() {
@@ -47,7 +39,7 @@ export default function Home(props) {
         try {
           const res = await fetch(`/api/getCoffeeStoresByLocation?latlong=${latlong}&limit=9`);
           const fetchedCoffeeStores = await res.json();
-          console.log({ fetchedCoffeeStores });
+          // console.log({ fetchedCoffeeStores });
           // setCoffeeStores(fetchedCoffeeStores);
           // dispatch({ type: ACTION_TYPES.SET_COFFEESTORES, payload: { coffeeStores: fetchedCoffeeStores } });
           setCoffeeStores(fetchedCoffeeStores)
@@ -63,7 +55,7 @@ export default function Home(props) {
     fetchData();}, [latlong])
 
   const handleOnBannerButtonClick = () => {
-    console.log('clicked banner button');
+    // console.log('clicked banner button');
     handleTrackLocation();
   }
 

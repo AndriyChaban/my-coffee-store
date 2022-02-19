@@ -9,6 +9,7 @@ import { fetchCoffeeStores } from "../../lib/coffee-stores";
 import { useContext, useEffect, useState } from "react";
 // import { StoreContext } from "../../context/store-context";
 import { useGlobalState } from "../../context/global-state";
+import useSWR from "swr";
 
 
 export async function getStaticProps({ params }) {
@@ -88,13 +89,46 @@ const CoffeeStore = (props) => {
 
     const { address, name, neighbourhood, imgUrl, storeImg } = coffeeStore;
     
-    const [votingCount, setVotingCount] = useState(1);
+    const [votingCount, setVotingCount] = useState(0);
 
-    const handleUpvoteButton = () => { 
-        console.log("handle upvote");
-        let count = votingCount + 1;
-        setVotingCount(count);
-     };
+    const fetcher = url => fetch(url).then(r => r.json())
+
+    const { data, error } = useSWR(`/api/getCoffeeStoreById?id=${id}`, fetcher);
+
+    useEffect(() => {
+        if (data && data.length > 0) {
+            // console.log('data from SWR: ', data);
+            setCoffeeStore(data[0]);
+            setVotingCount(data[0].voting)
+        }
+    }, [data])
+
+    if (error) {
+        return <div>Smth went wrong retreiving coffee store page</div>
+    }
+
+    const handleUpvoteButton = async () => { 
+        // console.log("handle upvote");
+        try {
+            let count = votingCount + 1;
+            setVotingCount(count);
+            // const { id,} = coffeeStore;
+            const response = await fetch('/api/favoriteCoffeeStoreById', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id })
+            });
+            // const dbCoffeeStore = response.json();
+            // console.log({ dbCoffeeStore });
+
+        } catch (err) {
+            console.error('Error updating Coffee Store: ', err)
+        }
+    };
+    
+    
     
     
     if (router.isFallback) {
