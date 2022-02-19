@@ -52,7 +52,8 @@ export default function Home(props) {
       }
 
     }
-    fetchData();}, [latlong])
+    fetchData();
+  }, [latlong])
 
   const handleOnBannerButtonClick = () => {
     // console.log('clicked banner button');
@@ -71,10 +72,10 @@ export default function Home(props) {
         <Banner
           buttonText={isFindingLoc ? "Locating..." : "View stores nearby"}
           handleOnClick={handleOnBannerButtonClick} />
-        {locationErrorMsg && <p>{locationErrorMsg }</p>}
+        {locationErrorMsg && <p>{locationErrorMsg}</p>}
         {coffeeStoresError && <p>{coffeeStoresError}</p>}
         <div className={styles.heroImage}>
-          <Image src='/static/hero-image.png' width='700' height='400' />
+          <Image src='/static/hero-image.png' width='700' height='400' alt="banner image" />
         </div>
 
         {coffeeStores.length > 0 && <>
